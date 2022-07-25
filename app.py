@@ -85,7 +85,6 @@ def index():
 
 @app.route('/venues')
 def venues():
-  raise Exception(app.config)
   # TODO: replace with real venues data.
   #       num_upcoming_shows should be aggregated based on number of upcoming shows per venue.
   data=[{
