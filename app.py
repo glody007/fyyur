@@ -389,9 +389,7 @@ def show_artist(artist_id):
 @app.route('/artists/<int:artist_id>/edit', methods=['GET'])
 def edit_artist(artist_id):
   form = ArtistForm()
-  artist = Artist.query.get(artist_id)
-  if artist == None: 
-    abort(404)
+  artist = Artist.query.get_or_404(artist_id)
   # populate form with fields from artist with ID <artist_id>
   form.name.data = artist.name
   form.city.data = artist.city
@@ -407,9 +405,7 @@ def edit_artist(artist_id):
 
 @app.route('/artists/<int:artist_id>/edit', methods=['POST'])
 def edit_artist_submission(artist_id):
-  artist = Artist.query.get(artist_id)
-  if artist == None: 
-    abort(404)
+  artist = Artist.query.get_or_404(artist_id)
   form = ArtistForm()
   if form.validate_on_submit():
     try:
