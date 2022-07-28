@@ -9,6 +9,7 @@ import babel
 from flask import Flask, render_template, jsonify, request, Response, abort, flash, redirect, url_for
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import func
 import logging
 from logging import Formatter, FileHandler
 from flask_wtf import Form
@@ -535,17 +536,26 @@ def create_artist_submission():
 def shows():
   # displays list of shows at /shows
   # replace with real venues data.
+  shows = db.session.query(Show).with_entities(
+    Show.venue_id, 
+    Show.artist_id, 
+    Show.start_time,
+    Venue.name.label('venue_name'), 
+    Artist.name.label('artist_name'),
+    Artist.image_link.label('artist_image_link'),
+  ).join(Show.venue).join(Show.artist).all()
+
   data = []
-  for show in Show.query.all():
-    displayed_show = {
-      "venue_id": show.venue_id,
-      "venue_name": show.venue.name,
-      "artist_id": show.artist_id,
-      "artist_name": show.artist.name,
-      "artist_image_link": show.artist.image_link,
-      "start_time": show.start_time.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
-    }
-    data.append(displayed_show)
+
+  for show in shows:
+      data.append({
+        "venue_id": show.venue_id,
+        "venue_name": show.venue_name,
+        "artist_id": show.artist_id,
+        "artist_name": show.artist_name,
+        "artist_image_link": show.artist_image_link,
+        "start_time": show.start_time.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+      })
   return render_template('pages/shows.html', shows=data)
 
 @app.route('/shows/create')
