@@ -419,6 +419,17 @@ def edit_venue(venue_id):
   if venue == None: 
     abort(404)
   # populate form with values from venue with ID <venue_id>
+  form.name.data = venue.name 
+  form.city.data = venue.city
+  form.state.data = venue.state
+  form.address.data = venue.address
+  form.genres.data = venue.genres 
+  form.phone.data = venue.phone
+  form.image_link.data = venue.image_link
+  form.facebook_link.data = venue.facebook_link
+  form.website_link.data = venue.website_link
+  form.seeking_talent.data = venue.seeking_talent
+  form.seeking_description.data = venue.seeking_description
   return render_template('forms/edit_venue.html', form=form, venue=venue)
 
 @app.route('/venues/<int:venue_id>/edit', methods=['POST'])
