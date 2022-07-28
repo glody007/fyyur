@@ -6,7 +6,7 @@ import json
 import sys
 from datetime import datetime
 import babel
-from flask import Flask, render_template, request, Response, abort, flash, redirect, url_for
+from flask import Flask, render_template, jsonify, request, Response, abort, flash, redirect, url_for
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
 import logging
@@ -44,7 +44,7 @@ class Venue(db.Model):
     website_link = db.Column(db.String(120))
     seeking_talent = db.Column(db.Boolean, default=False)
     seeking_description = db.Column(db.String(500))
-    shows = db.relationship('Show', backref='venue', lazy=True)   
+    shows = db.relationship('Show', cascade="all,delete", backref='venue', lazy=True)   
 
 class Artist(db.Model):
     __tablename__ = 'Artist'
@@ -267,12 +267,22 @@ def create_venue_submission():
 
 @app.route('/venues/<venue_id>', methods=['DELETE'])
 def delete_venue(venue_id):
-  # TODO: Complete this endpoint for taking a venue_id, and using
+  # Complete this endpoint for taking a venue_id, and using
   # SQLAlchemy ORM to delete a record. Handle cases where the session commit could fail.
-
-  # BONUS CHALLENGE: Implement a button to delete a Venue on a Venue Page, have it so that
-  # clicking that button delete it from the db then redirect the user to the homepage
-  return None
+  venue = Venue.query.get(venue_id)
+  if venue == None: 
+    abort(404)
+  try:
+    db.session.delete(venue)
+    db.session.commit()
+  except:
+    db.session.rollback()
+    error=True
+    print(sys.exc_info())
+    abort(500)
+  finally:
+    db.session.close()
+  return jsonify({ "id": venue.id })
 
 #  Artists
 #  ----------------------------------------------------------------
