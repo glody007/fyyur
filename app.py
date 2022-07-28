@@ -6,7 +6,7 @@ import json
 import sys
 from datetime import datetime
 import babel
-from flask import Flask, render_template, request, Response, flash, redirect, url_for
+from flask import Flask, render_template, request, Response, abort, flash, redirect, url_for
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
 import logging
@@ -536,6 +536,9 @@ def create_show_submission():
   form = ShowForm()
   venue = Venue.query.get(form.venue_id.data)
   artist = Artist.query.get(form.artist_id.data)
+  if venue == None or artist == None: 
+    abort(500)
+
   if form.validate_on_submit():
     try:
       show = Show(
