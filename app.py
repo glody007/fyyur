@@ -262,7 +262,7 @@ def create_venue_submission():
     finally:
       db.session.close()
   else: 
-    flash('Your input is not valide. fill required fields with good type')
+    return render_template('forms/new_venue.html', form=form)
   return render_template('pages/home.html')
 
 @app.route('/venues/<venue_id>', methods=['DELETE'])
