@@ -142,8 +142,7 @@ def search_venues():
 
 @app.route('/venues/<int:venue_id>')
 def show_venue(venue_id):
-  # shows the venue page with the given venue_id
-  # TODO: replace with real venue data from the venues table, using venue_id
+  venue = Venue.query.get_or_404(venue_id)
   data1={
     "id": 1,
     "name": "The Musical Hop",
@@ -272,9 +271,7 @@ def create_venue_submission():
 def delete_venue(venue_id):
   # Complete this endpoint for taking a venue_id, and using
   # SQLAlchemy ORM to delete a record. Handle cases where the session commit could fail.
-  venue = Venue.query.get(venue_id)
-  if venue == None: 
-    abort(404)
+  venue = Venue.query.get_or_404(venue_id)
   try:
     db.session.delete(venue)
     db.session.commit()
@@ -441,9 +438,7 @@ def edit_artist_submission(artist_id):
 @app.route('/venues/<int:venue_id>/edit', methods=['GET'])
 def edit_venue(venue_id):
   form = VenueForm()
-  venue = Venue.query.get(venue_id)
-  if venue == None: 
-    abort(404)
+  venue = Venue.query.get_or_404(venue_id)
   # populate form with values from venue with ID <venue_id>
   form.name.data = venue.name 
   form.city.data = venue.city
@@ -460,9 +455,7 @@ def edit_venue(venue_id):
 
 @app.route('/venues/<int:venue_id>/edit', methods=['POST'])
 def edit_venue_submission(venue_id):
-  venue = Venue.query.get(venue_id)
-  if venue == None: 
-    abort(404)
+  venue = Venue.query.get_or_404(venue_id)
   form = VenueForm()
   if form.validate_on_submit():
     try:
