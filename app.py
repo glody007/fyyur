@@ -9,7 +9,7 @@ import babel
 from flask import Flask, render_template, jsonify, request, Response, abort, flash, redirect, url_for
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import func
+from sqlalchemy import func, literal
 import logging
 from logging import Formatter, FileHandler
 from flask_wtf import Form
@@ -246,16 +246,20 @@ def venues():
 
 @app.route('/venues/search', methods=['POST'])
 def search_venues():
-  # TODO: implement search on venues with partial string search. Ensure it is case-insensitive.
-  # seach for Hop should return "The Musical Hop".
-  # search for "Music" should return "The Musical Hop" and "Park Square Live Music & Coffee"
+  search_term = request.form.get('search_term', '')
+  looking_for = '%{0}%'.format(search_term)
+  data = Venue.query.filter(
+    Venue.name.ilike(looking_for)
+  ).all()
   response={
-    "count": 1,
-    "data": [{
-      "id": 2,
-      "name": "The Dueling Pianos Bar",
-      "num_upcoming_shows": 0,
-    }]
+    "count": len(data),
+    "data": [
+      {
+        "id": venue.id,
+        "name": venue.name,
+        "num_upcoming_shows": venue.upcoming_shows(),
+      } for venue in data
+    ]
   }
   return render_template('pages/search_venues.html', results=response, search_term=request.form.get('search_term', ''))
 
