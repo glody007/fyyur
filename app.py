@@ -236,12 +236,7 @@ def venues():
       "venues": [{
         "id": venue.id,
         "name": venue.name,
-        "num_upcoming_show": db.session.query(
-          db.func.count(Show.id)
-        ).filter(
-          Show.start_time > datetime.now(),
-          Show.venue_id == venue.id
-        ).scalar()
+        "num_upcoming_show": venue.upcoming_shows()
       } for venue in Venue.query.filter(
         Venue.city == group.city,
         Venue.state == group.state
@@ -556,7 +551,7 @@ def shows():
       "start_time": show.start_time.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
     } for show in shows
   ]
-  
+
   return render_template('pages/shows.html', shows=data)
 
 @app.route('/shows/create')
