@@ -222,8 +222,8 @@ def index():
 
 @app.route('/venues')
 def venues():
-  # TODO: replace with real venues data.
-  #       num_upcoming_shows should be aggregated based on number of upcoming shows per venue.
+  # replace with real venues data.
+  # num_upcoming_shows should be aggregated based on number of upcoming shows per venue.
   data = []
   citiesAndStateGroups = db.session.query(
     Venue.state, 
