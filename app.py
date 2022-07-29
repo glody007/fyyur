@@ -546,17 +546,17 @@ def shows():
     Artist.image_link.label('artist_image_link'),
   ).join(Show.venue).join(Show.artist).all()
 
-  data = []
-
-  for show in shows:
-      data.append({
-        "venue_id": show.venue_id,
-        "venue_name": show.venue_name,
-        "artist_id": show.artist_id,
-        "artist_name": show.artist_name,
-        "artist_image_link": show.artist_image_link,
-        "start_time": show.start_time.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
-      })
+  data = [
+    {
+      "venue_id": show.venue_id,
+      "venue_name": show.venue_name,
+      "artist_id": show.artist_id,
+      "artist_name": show.artist_name,
+      "artist_image_link": show.artist_image_link,
+      "start_time": show.start_time.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+    } for show in shows
+  ]
+  
   return render_template('pages/shows.html', shows=data)
 
 @app.route('/shows/create')
